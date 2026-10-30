@@ -7,27 +7,26 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                checkout scm
-                echo 'Source code checked out from GitHub'
+                git branch: 'main',
+                    url: 'https://github.com/vineelagera123-blip/JavaCICD.git'
             }
         }
 
-        stage('Compilation') {
+        stage('Compile') {
             steps {
                 bat '"C:\\Program Files\\apache-maven-3.9.16\\bin\\mvn.cmd" clean compile'
             }
         }
 
-        stage('Testing') {
+        stage('Test') {
             steps {
                 bat '"C:\\Program Files\\apache-maven-3.9.16\\bin\\mvn.cmd" test'
             }
         }
 
-        stage('Packaging') {
+        stage('Package') {
             steps {
                 bat '"C:\\Program Files\\apache-maven-3.9.16\\bin\\mvn.cmd" package -DskipTests'
             }
@@ -36,12 +35,8 @@ pipeline {
 
     post {
         success {
-            archiveArtifacts artifacts: 'target/*.jar'
-            echo 'Build completed successfully!'
-        }
-
-        failure {
-            echo 'Build failed!'
+            archiveArtifacts artifacts: 'target/*.jar',
+                             fingerprint: true
         }
     }
 }
